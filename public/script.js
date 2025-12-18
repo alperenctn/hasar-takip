@@ -43,18 +43,13 @@ const allDocumentTypes = [
 // Dosyaları API'den yükle
 async function loadFilesFromAPI() {
     try {
-        console.log('Loading files from API...'); // DEBUG
+        console.log('Loading files from API...');
         const response = await fetch(`${API_URL}/api/files`);
         if (!response.ok) throw new Error('Dosyalar yüklenemedi');
         
         const data = await response.json();
-        console.log('API response:', data); // DEBUG
+        console.log('API response:', data);
         files = data;
-        
-        // Debug: İlk dosyanın belgelerini kontrol et
-        if (files.length > 0) {
-            console.log('First file documents:', files[0].documents);
-        }
         
         return files;
     } catch (error) {
@@ -126,30 +121,68 @@ async function deleteFileAPI(fileId) {
     }
 }
 
-// Belge yükle (API) - DÜZELTİLDİ
+// Belge yükle (API)
 async function uploadDocumentAPI(file, type) {
+    console.log('🔍 uploadDocumentAPI çağrıldı:', file.name, type);
+    
     try {
         const formData = new FormData();
         formData.append('document', file);
         formData.append('type', type);
-        formData.append('fileName', file.name);
         
+        console.log('📡 API isteği gönderiliyor...');
         const response = await fetch(`${API_URL}/api/upload`, {
             method: 'POST',
             body: formData
         });
         
+        console.log('📊 Response status:', response.status, response.statusText);
+        
         if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || 'Belge yüklenemedi');
+            let errorMessage = `Sunucu hatası: ${response.status}`;
+            try {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+                console.error('❌ Sunucu hatası detayı:', errorData);
+            } catch (e) {
+                const errorText = await response.text();
+                console.error('❌ Sunucu hatası (text):', errorText);
+                errorMessage = errorText || errorMessage;
+            }
+            throw new Error(errorMessage);
         }
         
         const result = await response.json();
+        console.log('✅ Upload başarılı! Sonuç:', result);
+        
+        if (!result.success) {
+            throw new Error(result.message || 'Upload başarısız');
+        }
+        
         return result.document;
+        
     } catch (error) {
-        console.error('Belge yükleme hatası:', error);
+        console.error('🔥 uploadDocumentAPI hatası:', error);
         showError(`Belge yüklenemedi: ${error.message}`);
         return null;
+    }
+}
+
+// Belge sil (API)
+async function deleteDocumentAPI(docId) {
+    try {
+        const response = await fetch(`${API_URL}/api/documents/${docId}`, {
+            method: 'DELETE'
+        });
+        
+        if (!response.ok) throw new Error('Belge silinemedi');
+        
+        const result = await response.json();
+        return result.success;
+    } catch (error) {
+        console.error('Belge silme hatası:', error);
+        showError('Belge silinemedi.');
+        return false;
     }
 }
 
@@ -193,7 +226,7 @@ function getStatusClass(status) {
     return statusClasses[status] || 'status-default';
 }
 
-// Tarih formatlama fonksiyonu - GLOBAL olarak tanımla
+// Tarih formatlama fonksiyonu
 function formatDate(dateStr) {
     if (!dateStr) return '-';
     try {
@@ -435,26 +468,21 @@ function renderFilesTable(filteredFiles = null) {
     
     // Önce "Başvuruya Hazır", sonra "Evrak Tedarik Aşamasında", sonra diğerleri
     const sortedFiles = [...filesToDisplay].sort((a, b) => {
-        // Başvuruya Hazır öncelikli
         if (a.fileStatus === 'Başvuruya Hazır' && b.fileStatus !== 'Başvuruya Hazır') return -1;
         if (a.fileStatus !== 'Başvuruya Hazır' && b.fileStatus === 'Başvuruya Hazır') return 1;
         
-        // Evrak Tedarik Aşamasında ikinci öncelikli
         if (a.fileStatus === 'Evrak Tedarik Aşamasında' && b.fileStatus !== 'Evrak Tedarik Aşamasında') return -1;
         if (a.fileStatus !== 'Evrak Tedarik Aşamasında' && b.fileStatus === 'Evrak Tedarik Aşamasında') return 1;
         
-        // Sonra kayıt tarihine göre (en yeni en üstte)
         return new Date(b.registrationDate) - new Date(a.registrationDate);
     });
     
     sortedFiles.forEach(file => {
         const row = document.createElement('tr');
         
-        // Tarih formatını düzenle
         const date = new Date(file.registrationDate);
         const formattedDate = `${date.getDate().toString().padStart(2, '0')}.${(date.getMonth()+1).toString().padStart(2, '0')}.${date.getFullYear()}`;
         
-        // Dosya türlerini göster
         const fileTypesDisplay = getFileTypesDisplay(file);
         
         row.innerHTML = `
@@ -502,11 +530,9 @@ function renderPendingFilesTable() {
         const date = new Date(file.registrationDate);
         const formattedDate = `${date.getDate().toString().padStart(2, '0')}.${(date.getMonth()+1).toString().padStart(2, '0')}.${date.getFullYear()}`;
         
-        // Eksik belgeleri bul
         const missingDocs = getMissingDocuments(file);
         const missingCount = missingDocs.length;
         
-        // Dosya türlerini göster
         const fileTypesDisplay = getFileTypesDisplay(file);
         
         row.innerHTML = `
@@ -558,11 +584,9 @@ function renderReadyFilesTable() {
         const date = new Date(file.registrationDate);
         const formattedDate = `${date.getDate().toString().padStart(2, '0')}.${(date.getMonth()+1).toString().padStart(2, '0')}.${date.getFullYear()}`;
         
-        // Eksik belgeleri bul
         const missingDocs = getMissingDocuments(file);
         const missingCount = missingDocs.length;
         
-        // Dosya türlerini göster
         const fileTypesDisplay = getFileTypesDisplay(file);
         
         row.innerHTML = `
@@ -670,20 +694,13 @@ async function renderFileDetail(fileId) {
     const file = files.find(f => f.id === fileId);
     if (!file) return;
     
-    console.log('Rendering file detail for:', fileId); // DEBUG
-    console.log('File data:', file); // DEBUG
-    console.log('File documents:', file.documents); // DEBUG
+    console.log('Rendering file detail for:', fileId);
     
     const fileView = document.getElementById('fileView');
     document.getElementById('fileDetailTitle').textContent = `${file.clientName} - ${file.plate}`;
     
-    // Eksik belgeleri bul
     const missingDocuments = getMissingDocuments(file);
-    
-    // Dosya türlerini göster
     const fileTypesHtml = renderFileTypes(file);
-    
-    // Belgeleri render et
     const documentsHtml = renderUploadedDocuments(file);
     
     fileView.innerHTML = `
@@ -765,7 +782,7 @@ async function renderFileDetail(fileId) {
                 <div class="form-row">
                     <label>Sigorta Şirketi:</label>
                     <div style="padding: 10px; background: white; border-radius: var(--radius); border: 1px solid var(--border);">${file.insuranceCompany || '-'}</div>
-                </div>
+            </div>
             </div>
             
             <div class="form-section">
@@ -809,8 +826,6 @@ async function renderFileDetail(fileId) {
         </div>
         ` : ''}
     `;
-    
-    console.log('File view HTML set'); // DEBUG
 }
 
 // Dosya türlerini render et
@@ -837,12 +852,9 @@ function renderFileTypes(file) {
     return '-';
 }
 
-// Yüklenen belgeleri grid formatında göster - GÜNCELLENDİ
+// Yüklenen belgeleri grid formatında göster
 function renderUploadedDocuments(file) {
-    console.log('renderUploadedDocuments called for file:', file.id); // DEBUG
-    
     if (!file.documents || file.documents.length === 0) {
-        console.log('No documents found'); // DEBUG
         return `
             <div style="text-align: center; padding: 40px; color: #94a3b8;">
                 <i class="fas fa-file-upload" style="font-size: 48px; margin-bottom: 15px;"></i>
@@ -851,21 +863,18 @@ function renderUploadedDocuments(file) {
         `;
     }
     
-    console.log('Documents found:', file.documents.length); // DEBUG
-    
     try {
-        return file.documents.map(doc => {
-            console.log('Processing document:', doc); // DEBUG
-            
-            // Farklı belge yapılarına uyum sağla
-            const docName = doc.name || doc.fileName || 'Belge';
+        return file.documents.map((doc, index) => {
+            const docName = doc.name || doc.originalname || 'Belge';
             const docType = doc.type || 'Belge';
-            const docDate = doc.uploadedDate || doc.createdAt;
+            const docDate = doc.uploadedDate || new Date().toISOString();
             const docSize = doc.size || 0;
             const docFilename = doc.filename || doc.id || '';
+            const docId = doc.id || doc._id || '';
             
             const safeDocName = docName.replace(/'/g, "\\'").replace(/"/g, '\\"');
             const safeDocFilename = docFilename.replace(/'/g, "\\'").replace(/"/g, '\\"');
+            const safeDocId = docId.replace(/'/g, "\\'").replace(/"/g, '\\"');
             
             return `
             <div class="document-card">
@@ -895,6 +904,9 @@ function renderUploadedDocuments(file) {
                             <i class="fas fa-download"></i> İndir
                         </button>
                     `}
+                    <button class="btn btn-danger btn-sm" onclick="removeDocumentFromFile('${file.id}', '${safeDocId}')">
+                        <i class="fas fa-trash"></i>
+                    </button>
                 </div>
             </div>
             `;
@@ -905,6 +917,7 @@ function renderUploadedDocuments(file) {
             <div style="text-align: center; padding: 40px; color: #94a3b8;">
                 <i class="fas fa-exclamation-triangle" style="font-size: 48px; margin-bottom: 15px;"></i>
                 <p>Belgeler yüklenirken hata oluştu</p>
+                <small>${error.message}</small>
             </div>
         `;
     }
@@ -925,13 +938,42 @@ function downloadDocument(filename, originalName) {
     document.body.removeChild(a);
 }
 
+// Dosyadan belge sil
+async function removeDocumentFromFile(fileId, docId) {
+    if (!confirm('Bu belgeyi silmek istediğinize emin misiniz?')) {
+        return;
+    }
+    
+    const fileIndex = files.findIndex(f => f.id === fileId);
+    if (fileIndex === -1) {
+        showError('Dosya bulunamadı.');
+        return;
+    }
+    
+    try {
+        const success = await deleteDocumentAPI(docId);
+        if (success) {
+            files[fileIndex].documents = files[fileIndex].documents.filter(doc => 
+                doc.id !== docId && doc._id !== docId
+            );
+            
+            showSuccess('Belge silindi.');
+            renderFileDetail(fileId);
+        } else {
+            throw new Error('Belge silinemedi');
+        }
+    } catch (error) {
+        console.error('Belge silme hatası:', error);
+        showError('Belge silinemedi.');
+    }
+}
+
 // ==================== YENİ DOSYA FORMU ====================
 
 // Yeni dosya formunu render et
 function renderNewFileForm() {
     const form = document.getElementById('newFileForm');
     
-    // Dosya türü seçenekleri (çoklu seçim için checkbox)
     const fileTypeCheckboxes = fileTypes.map(type => `
         <div class="checkbox-item">
             <input type="checkbox" id="fileType_${type.replace(/\s+/g, '_')}" name="fileTypes" value="${type}">
@@ -939,12 +981,10 @@ function renderNewFileForm() {
         </div>
     `).join('');
     
-    // Dosya durumu seçenekleri
     const fileStatusOptions = fileStatuses.map(status => 
         `<option value="${status}">${status}</option>`
     ).join('');
     
-    // Belge türü seçenekleri
     const documentTypeOptions = allDocumentTypes.map(type => 
         `<option value="${type}">${type}</option>`
     ).join('');
@@ -1086,10 +1126,16 @@ function renderNewFileForm() {
     };
 }
 
-// Yeni dosyaya belge ekle - GÜNCELLENDİ
+// Yeni dosyaya belge ekle
 function addDocument() {
     const docType = document.getElementById('documentType').value;
     const fileInput = document.getElementById('documentFile');
+    
+    console.log('🔍 addDocument çağrıldı:', {
+        docType: docType,
+        files: fileInput.files,
+        fileCount: fileInput.files.length
+    });
     
     if (!docType) {
         alert('Lütfen bir belge türü seçin.');
@@ -1105,15 +1151,25 @@ function addDocument() {
     
     for (let i = 0; i < fileInput.files.length; i++) {
         const file = fileInput.files[i];
-        const fileId = generateId();
+        console.log(`📁 Dosya ${i + 1}:`, file);
+        
+        const fileId = 'file_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        
         const fileItem = document.createElement('div');
         fileItem.className = 'file-item';
+        fileItem.id = fileId;
         fileItem.setAttribute('data-file-id', fileId);
         fileItem.style.cssText = 'display: flex; justify-content: space-between; align-items: center; padding: 10px; background: white; border-radius: var(--radius); margin-bottom: 8px; border: 1px solid var(--border);';
+        
+        // File objesini DOM elementine ekle
+        fileItem.fileObject = file;
+        
         fileItem.innerHTML = `
             <div>
                 <span><strong>${docType}:</strong> ${file.name}</span>
-                <div style="font-size: 12px; color: #94a3b8;">${formatFileSize(file.size)}</div>
+                <div style="font-size: 12px; color: #94a3b8;">
+                    ${formatFileSize(file.size)} • ${file.type || 'Unknown type'}
+                </div>
             </div>
             <div style="display: flex; gap: 5px;">
                 <button type="button" class="btn btn-success btn-sm" onclick="uploadSingleDocument('${fileId}', this)">
@@ -1125,63 +1181,102 @@ function addDocument() {
             </div>
         `;
         
-        // Dosyayı data attribute olarak sakla
-        fileItem.dataset.file = JSON.stringify({
+        // Metadata'ları sakla
+        fileItem.dataset.fileInfo = JSON.stringify({
             id: fileId,
             type: docType,
-            file: file,
-            uploaded: false
+            name: file.name,
+            size: file.size,
+            mimeType: file.type,
+            status: 'pending'
         });
         
         fileList.appendChild(fileItem);
+        console.log(`✅ DOM öğesi eklendi: ${fileId}`, fileItem);
     }
     
+    // Input'u temizle
     fileInput.value = '';
 }
 
-// Tekil belge yükle - YENİ EKLENDİ
+// Tekil belge yükle
 async function uploadSingleDocument(fileId, button) {
-    const fileItem = document.querySelector(`[data-file-id="${fileId}"]`);
-    if (!fileItem) return;
+    console.log('🔍 uploadSingleDocument çağrıldı:', fileId);
     
-    const fileData = JSON.parse(fileItem.dataset.file);
-    if (fileData.uploaded) return;
+    const fileItem = document.getElementById(fileId) || document.querySelector(`[data-file-id="${fileId}"]`);
+    if (!fileItem) {
+        console.error('❌ Dosya öğesi bulunamadı:', fileId);
+        showError('Dosya bulunamadı');
+        return;
+    }
+    
+    // File objesini al
+    const file = fileItem.fileObject;
+    if (!file) {
+        console.error('❌ File object bulunamadı:', fileId);
+        showError('Dosya objesi bulunamadı');
+        return;
+    }
+    
+    // File bilgilerini al
+    let fileInfo;
+    try {
+        fileInfo = JSON.parse(fileItem.dataset.fileInfo || '{}');
+        console.log('📋 Dosya bilgileri:', fileInfo);
+    } catch (error) {
+        console.error('❌ fileInfo parse hatası:', error);
+        fileInfo = { type: 'Belge' };
+    }
+    
+    console.log('📁 Yüklenecek dosya:', {
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        docType: fileInfo.type
+    });
     
     const originalButtonHTML = button.innerHTML;
     button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Yükleniyor...';
     button.disabled = true;
     
     try {
-        const uploadedDoc = await uploadDocumentAPI(fileData.file, fileData.type);
+        const uploadedDoc = await uploadDocumentAPI(file, fileInfo.type);
+        
         if (uploadedDoc) {
-            fileData.uploaded = true;
-            fileData.uploadedDoc = uploadedDoc;
-            fileItem.dataset.file = JSON.stringify(fileData);
+            // Başarılı - uploadedDoc'u sakla
+            fileItem.dataset.uploaded = 'true';
+            
+            // Güncellenmiş fileInfo'yu kaydet
+            fileInfo.status = 'uploaded';
+            fileInfo.uploadedDoc = uploadedDoc;
+            fileItem.dataset.fileInfo = JSON.stringify(fileInfo);
             
             button.innerHTML = '<i class="fas fa-check"></i> Yüklendi';
             button.className = 'btn btn-success btn-sm disabled';
+            button.disabled = true;
             
-            showSuccess(`${fileData.file.name} başarıyla yüklendi.`);
+            console.log('✅ Dosya başarıyla yüklendi:', uploadedDoc);
+            showSuccess(`${file.name} başarıyla yüklendi.`);
         } else {
-            throw new Error('Belge yüklenemedi');
+            throw new Error('Belge yüklenemedi (null döndü)');
         }
     } catch (error) {
-        console.error('Belge yükleme hatası:', error);
+        console.error('❌ Dosya yükleme hatası:', error);
         button.innerHTML = originalButtonHTML;
         button.disabled = false;
-        showError(`${fileData.file.name} yüklenemedi: ${error.message}`);
+        showError(`${file.name} yüklenemedi: ${error.message}`);
     }
 }
 
-// Belge öğesini sil - YENİ EKLENDİ
+// Belge öğesini sil
 function removeDocumentItem(fileId) {
-    const fileItem = document.querySelector(`[data-file-id="${fileId}"]`);
+    const fileItem = document.getElementById(fileId) || document.querySelector(`[data-file-id="${fileId}"]`);
     if (fileItem) {
         fileItem.remove();
     }
 }
 
-// Yeni dosyayı kaydet - GÜNCELLENDİ
+// Yeni dosyayı kaydet
 async function saveNewFile() {
     if (isSubmitting) return;
     isSubmitting = true;
@@ -1203,7 +1298,6 @@ async function saveNewFile() {
             selectedFileTypes.push(checkbox.value);
         });
         
-        // Eğer hiçbir dosya türü seçilmediyse
         if (selectedFileTypes.length === 0) {
             alert('Lütfen en az bir dosya türü seçin.');
             isSubmitting = false;
@@ -1215,9 +1309,9 @@ async function saveNewFile() {
         const documents = [];
         
         for (const item of fileItems) {
-            const fileData = JSON.parse(item.dataset.file);
-            if (fileData.uploaded && fileData.uploadedDoc) {
-                documents.push(fileData.uploadedDoc);
+            const fileInfo = JSON.parse(item.dataset.fileInfo || '{}');
+            if (fileInfo.status === 'uploaded' && fileInfo.uploadedDoc) {
+                documents.push(fileInfo.uploadedDoc);
             }
         }
         
@@ -1244,6 +1338,8 @@ async function saveNewFile() {
             notes: document.getElementById('notes').value.trim(),
             documents: documents
         };
+        
+        console.log('💾 Yeni dosya verisi:', newFile);
         
         // API'ye gönder
         const result = await addFileAPI(newFile);
@@ -1277,7 +1373,6 @@ function renderEditForm(fileId) {
     
     const fileEdit = document.getElementById('fileEdit');
     
-    // Dosya türü seçenekleri (çoklu seçim için checkbox)
     const fileTypeCheckboxes = fileTypes.map(type => `
         <div class="checkbox-item">
             <input type="checkbox" id="editFileType_${type.replace(/\s+/g, '_')}" name="editFileTypes" value="${type}" 
@@ -1286,29 +1381,31 @@ function renderEditForm(fileId) {
         </div>
     `).join('');
     
-    // Dosya durumu seçenekleri
     const fileStatusOptions = fileStatuses.map(status => 
         `<option value="${status}" ${file.fileStatus === status ? 'selected' : ''}>${status}</option>`
     ).join('');
     
-    // Belge türü seçenekleri
     const documentTypeOptions = allDocumentTypes.map(type => 
         `<option value="${type}">${type}</option>`
     ).join('');
     
     // Mevcut belgeleri listele
     const currentDocumentsHtml = file.documents && file.documents.length > 0 ? 
-        file.documents.map(doc => `
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: white; border-radius: var(--radius); margin-bottom: 8px; border: 1px solid var(--border);">
-                <div>
-                    <div><strong>${doc.type}:</strong> ${doc.name || doc.fileName}</div>
-                    <div style="font-size: 12px; color: #94a3b8;">${formatDate(doc.uploadedDate || doc.createdAt)} • ${formatFileSize(doc.size)}</div>
+        file.documents.map(doc => {
+            const docId = doc.id || doc._id || '';
+            const safeDocId = docId.replace(/'/g, "\\'").replace(/"/g, '\\"');
+            return `
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: white; border-radius: var(--radius); margin-bottom: 8px; border: 1px solid var(--border);">
+                    <div>
+                        <div><strong>${doc.type}:</strong> ${doc.name || doc.originalname || 'Belge'}</div>
+                        <div style="font-size: 12px; color: #94a3b8;">${formatDate(doc.uploadedDate || doc.createdAt)} • ${formatFileSize(doc.size)}</div>
+                    </div>
+                    <button type="button" class="btn btn-danger btn-sm" onclick="removeDocumentFromFile('${file.id}', '${safeDocId}')" style="padding: 4px 8px; font-size: 12px;">
+                        <i class="fas fa-trash"></i>
+                    </button>
                 </div>
-                <button type="button" class="btn btn-danger btn-sm" onclick="removeDocument('${file.id}', '${doc.id || doc.filename}')" style="padding: 4px 8px; font-size: 12px;">
-                    <i class="fas fa-trash"></i>
-                </button>
-            </div>
-        `).join('') : 
+            `;
+        }).join('') : 
         '<div style="text-align: center; padding: 15px; color: #94a3b8;">Henüz belge yüklenmemiş</div>';
     
     fileEdit.innerHTML = `
@@ -1470,49 +1567,12 @@ function cancelEdit() {
     }
 }
 
-// Belgeyi sil - GÜNCELLENDİ
-async function removeDocument(fileId, docId) {
-    if (!confirm('Bu belgeyi silmek istediğinize emin misiniz?')) {
-        return;
-    }
-    
-    const fileIndex = files.findIndex(f => f.id === fileId);
-    if (fileIndex !== -1) {
-        const docIndex = files[fileIndex].documents.findIndex(d => (d.id === docId) || (d.filename === docId));
-        if (docIndex !== -1) {
-            // API'den sil
-            try {
-                const response = await fetch(`${API_URL}/api/documents/${docId}`, {
-                    method: 'DELETE'
-                });
-                
-                if (!response.ok) throw new Error('Belge silinemedi');
-                
-                // Yerel listeden sil
-                files[fileIndex].documents.splice(docIndex, 1);
-                
-                // API'ye güncellenmiş dosyayı gönder
-                const success = await updateFileAPI(fileId, files[fileIndex]);
-                if (success) {
-                    // Düzenleme formunu yenile
-                    if (isEditing) {
-                        renderEditForm(fileId);
-                    }
-                    
-                    showSuccess('Belge silindi.');
-                }
-            } catch (error) {
-                console.error('Belge silme hatası:', error);
-                showError('Belge silinemedi.');
-            }
-        }
-    }
-}
-
-// Düzenleme formuna belge ekle - GÜNCELLENDİ
+// Düzenleme formuna belge ekle
 function addDocumentToEdit() {
     const docType = document.getElementById('editDocumentType').value;
     const fileInput = document.getElementById('editDocumentFile');
+    
+    console.log('🔍 addDocumentToEdit çağrıldı:', docType, fileInput.files);
     
     if (!docType) {
         alert('Lütfen bir belge türü seçin.');
@@ -1528,11 +1588,19 @@ function addDocumentToEdit() {
     
     for (let i = 0; i < fileInput.files.length; i++) {
         const file = fileInput.files[i];
-        const fileId = generateId();
+        console.log('📁 İşlenen dosya:', file);
+        
+        const fileId = 'edit_file_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        
         const fileItem = document.createElement('div');
         fileItem.className = 'file-item';
+        fileItem.id = fileId;
         fileItem.setAttribute('data-file-id', fileId);
         fileItem.style.cssText = 'display: flex; justify-content: space-between; align-items: center; padding: 10px; background: white; border-radius: var(--radius); margin-bottom: 8px; border: 1px solid var(--border);';
+        
+        // File objesini sakla
+        fileItem.fileObject = file;
+        
         fileItem.innerHTML = `
             <div>
                 <span><strong>${docType}:</strong> ${file.name}</span>
@@ -1548,63 +1616,85 @@ function addDocumentToEdit() {
             </div>
         `;
         
-        // Dosyayı data attribute olarak sakla
-        fileItem.dataset.file = JSON.stringify({
+        // Metadata'yı kaydet
+        fileItem.dataset.fileInfo = JSON.stringify({
             id: fileId,
             type: docType,
-            file: file,
-            uploaded: false
+            name: file.name,
+            size: file.size,
+            fileType: file.type,
+            status: 'pending'
         });
         
         fileList.appendChild(fileItem);
+        console.log('✅ Dosya öğesi eklendi:', fileId);
     }
     
     fileInput.value = '';
 }
 
-// Düzenleme için tekil belge yükle - YENİ EKLENDİ
+// Düzenleme için tekil belge yükle
 async function uploadSingleDocumentForEdit(fileId, button) {
-    const fileItem = document.querySelector(`[data-file-id="${fileId}"]`);
-    if (!fileItem) return;
+    console.log('🔍 uploadSingleDocumentForEdit çağrıldı:', fileId);
     
-    const fileData = JSON.parse(fileItem.dataset.file);
-    if (fileData.uploaded) return;
+    const fileItem = document.getElementById(fileId) || document.querySelector(`[data-file-id="${fileId}"]`);
+    if (!fileItem) {
+        console.error('❌ Dosya öğesi bulunamadı:', fileId);
+        return;
+    }
+    
+    // File objesini al
+    const file = fileItem.fileObject;
+    if (!file) {
+        console.error('❌ File object bulunamadı:', fileId);
+        showError('Dosya objesi bulunamadı');
+        return;
+    }
+    
+    const fileInfo = JSON.parse(fileItem.dataset.fileInfo || '{}');
+    console.log('📁 Yüklenecek dosya:', file);
+    console.log('📋 Dosya bilgileri:', fileInfo);
     
     const originalButtonHTML = button.innerHTML;
     button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Yükleniyor...';
     button.disabled = true;
     
     try {
-        const uploadedDoc = await uploadDocumentAPI(fileData.file, fileData.type);
+        const uploadedDoc = await uploadDocumentAPI(file, fileInfo.type);
         if (uploadedDoc) {
-            fileData.uploaded = true;
-            fileData.uploadedDoc = uploadedDoc;
-            fileItem.dataset.file = JSON.stringify(fileData);
+            // Başarılı
+            fileItem.dataset.uploaded = 'true';
+            
+            // Güncellenmiş fileInfo
+            fileInfo.status = 'uploaded';
+            fileInfo.uploadedDoc = uploadedDoc;
+            fileItem.dataset.fileInfo = JSON.stringify(fileInfo);
             
             button.innerHTML = '<i class="fas fa-check"></i> Yüklendi';
             button.className = 'btn btn-success btn-sm disabled';
             
-            showSuccess(`${fileData.file.name} başarıyla yüklendi.`);
+            console.log('✅ Dosya başarıyla yüklendi:', uploadedDoc);
+            showSuccess(`${file.name} başarıyla yüklendi.`);
         } else {
-            throw new Error('Belge yüklenemedi');
+            throw new Error('Belge yüklenemedi (null döndü)');
         }
     } catch (error) {
-        console.error('Belge yükleme hatası:', error);
+        console.error('❌ Dosya yükleme hatası:', error);
         button.innerHTML = originalButtonHTML;
         button.disabled = false;
-        showError(`${fileData.file.name} yüklenemedi: ${error.message}`);
+        showError(`${file.name} yüklenemedi: ${error.message}`);
     }
 }
 
-// Düzenleme belge öğesini sil - YENİ EKLENDİ
+// Düzenleme belge öğesini sil
 function removeDocumentEditItem(fileId) {
-    const fileItem = document.querySelector(`[data-file-id="${fileId}"]`);
+    const fileItem = document.getElementById(fileId) || document.querySelector(`[data-file-id="${fileId}"]`);
     if (fileItem) {
         fileItem.remove();
     }
 }
 
-// Düzenlenen dosyayı kaydet - GÜNCELLENDİ
+// Düzenlenen dosyayı kaydet
 async function saveEditedFile(fileId) {
     if (isSubmitting) return;
     isSubmitting = true;
@@ -1633,7 +1723,6 @@ async function saveEditedFile(fileId) {
             selectedFileTypes.push(checkbox.value);
         });
         
-        // Eğer hiçbir dosya türü seçilmediyse
         if (selectedFileTypes.length === 0) {
             alert('Lütfen en az bir dosya türü seçin.');
             isSubmitting = false;
@@ -1648,9 +1737,9 @@ async function saveEditedFile(fileId) {
         const newDocuments = [...file.documents];
         
         for (const item of newFileItems) {
-            const fileData = JSON.parse(item.dataset.file);
-            if (fileData.uploaded && fileData.uploadedDoc) {
-                newDocuments.push(fileData.uploadedDoc);
+            const fileInfo = JSON.parse(item.dataset.fileInfo || '{}');
+            if (fileInfo.status === 'uploaded' && fileInfo.uploadedDoc) {
+                newDocuments.push(fileInfo.uploadedDoc);
             }
         }
         
@@ -1812,3 +1901,12 @@ window.uploadSingleDocument = uploadSingleDocument;
 window.removeDocumentItem = removeDocumentItem;
 window.uploadSingleDocumentForEdit = uploadSingleDocumentForEdit;
 window.removeDocumentEditItem = removeDocumentEditItem;
+window.showFileDetail = showFileDetail;
+window.showNewFileForm = showNewFileForm;
+window.showFileList = showFileList;
+window.deleteFile = deleteFile;
+window.viewDocument = viewDocument;
+window.downloadDocument = downloadDocument;
+window.removeDocumentFromFile = removeDocumentFromFile;
+window.markAsApplied = markAsApplied;
+window.markAsReady = markAsReady;

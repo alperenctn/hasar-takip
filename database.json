@@ -1,56 +1,5 @@
 {
-  "files": [
-    {
-      "id": "mjbujh7b9byc7wr9n",
-      "registrationDate": "2025-12-18T19:41:39.671Z",
-      "clientName": "aa",
-      "tc": "aa",
-      "plate": "aa",
-      "driverName": "",
-      "fileTypes": [
-        "Değer Kaybı"
-      ],
-      "fileType": "Değer Kaybı",
-      "fileStatus": "Başvuruya Hazır",
-      "opponentName": "",
-      "opponentPlate": "",
-      "opponentDriver": "",
-      "insuranceCompany": "",
-      "percentage": "",
-      "master": "",
-      "insuranceApplicationDate": "",
-      "arbitrationApplicationDate": "",
-      "enforcementApplicationDate": "",
-      "currentStatus": "",
-      "notes": "",
-      "documents": []
-    },
-    {
-      "id": "mjbuxl57zok6zdzzo",
-      "registrationDate": "2025-12-18T19:52:37.963Z",
-      "clientName": "ff",
-      "tc": "ff",
-      "plate": "ff",
-      "driverName": "",
-      "fileTypes": [
-        "Değer Kaybı"
-      ],
-      "fileType": "Değer Kaybı",
-      "fileStatus": "Başvuruya Hazır",
-      "opponentName": "",
-      "opponentPlate": "",
-      "opponentDriver": "",
-      "insuranceCompany": "",
-      "percentage": "",
-      "master": "",
-      "insuranceApplicationDate": "",
-      "arbitrationApplicationDate": "",
-      "enforcementApplicationDate": "",
-      "currentStatus": "",
-      "notes": "",
-      "documents": []
-    }
-  ],
+  "files": [],
   "users": [
     {
       "username": "123",
@@ -61,23 +10,23 @@
     "initialized": true
   },
   "statistics": {
-    "totalFiles": 2,
+    "totalFiles": 0,
     "fileTypes": {
-      "Değer Kaybı": 2,
+      "Değer Kaybı": 0,
       "İkame Araç Bedeli": 0,
       "İcra Takibi": 0,
       "Pert Farkı": 0,
       "Diğer": 0
     },
     "fileStatuses": {
-      "Başvuruya Hazır": 2,
+      "Başvuruya Hazır": 0,
       "Başvuru Yapıldı": 0,
       "Evrak Tedarik Aşamasında": 0,
       "Tahkimde": 0,
       "İcrada": 0,
       "Kapandı": 0
     },
-    "readyFilesCount": 2,
+    "readyFilesCount": 0,
     "pendingFilesCount": 0
   }
 }
