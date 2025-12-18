@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sigorta Tahkim Dosya Takip Sistemi</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Giriş Ekranı -->
+    <div id="loginScreen">
+        <div class="login-container">
+            <div class="login-box">
+                <div class="logo">
+                    <i class="fas fa-file-contract"></i>
+                    <h1>Sigorta Tahkim Dosya Takip</h1>
+                </div>
+                <div class="login-form">
+                    <div class="form-group">
+                        <label for="username">Kullanıcı Adı</label>
+                        <input type="text" id="username" placeholder="Kullanıcı adınızı girin" value="123">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Şifre</label>
+                        <input type="password" id="password" placeholder="Şifrenizi girin" value="123">
+                    </div>
+                    <button id="loginBtn" class="btn btn-primary">
+                        <i class="fas fa-sign-in-alt"></i> Giriş Yap
+                    </button>
+                    <div class="login-info">
+                        <p><i class="fas fa-info-circle"></i> Kullanıcı adı: <strong>123</strong></p>
+                        <p><i class="fas fa-key"></i> Şifre: <strong>123</strong></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ana Uygulama Ekranı -->
+    <div id="appScreen" style="display: none;">
+        <!-- Header -->
+        <header>
+            <div class="header-left">
+                <div class="logo">
+                    <i class="fas fa-file-contract"></i>
+                    <h1>Sigorta Tahkim Dosya Takip</h1>
+                </div>
+            </div>
+            <div class="header-right">
+                <button id="logoutBtn" class="btn btn-secondary">
+                    <i class="fas fa-sign-out-alt"></i> Çıkış
+                </button>
+            </div>
+        </header>
+
+        <!-- Ana İçerik -->
+        <div class="main-container">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <div class="sidebar-menu">
+                    <button id="newFileBtn" class="btn btn-primary btn-block">
+                        <i class="fas fa-plus-circle"></i> Yeni Dosya
+                    </button>
+                    
+                    <!-- Ayırıcı çizgi - Yeni Dosya ve Tüm Dosyalar arasına -->
+                    <div class="sidebar-divider"></div>
+                    
+                    <button id="listFilesBtn" class="btn btn-secondary btn-block">
+                        <i class="fas fa-list"></i> Tüm Dosyalar
+                    </button>
+                    
+                    <!-- Özel Filtre Butonları (alt alta) -->
+                    <div class="sidebar-filter-buttons">
+                        <button id="showPendingBtn" class="btn btn-warning">
+                            <i class="fas fa-hourglass-half"></i> Evrak Tedarik
+                            <span id="pendingFilesCount" class="badge">0</span>
+                        </button>
+                        <button id="showReadyBtn" class="btn btn-success">
+                            <i class="fas fa-clipboard-check"></i> Hazır Dosyalar
+                            <span id="readyFilesCount" class="badge">0</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="stats-container">
+                    <h3><i class="fas fa-chart-bar"></i> İstatistikler</h3>
+                    <div class="stats-box">
+                        <h4>Dosya Türleri</h4>
+                        <div id="fileTypeStats"></div>
+                    </div>
+                    <div class="stats-box">
+                        <h4>Dosya Durumları</h4>
+                        <div id="fileStatusStats"></div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Ana İçerik Alanı -->
+            <main class="main-content">
+                <!-- Dosya Listesi -->
+                <div id="fileListSection">
+                    <div class="content-header">
+                        <div class="search-container">
+                            <div class="search-box">
+                                <i class="fas fa-search"></i>
+                                <input type="text" id="searchInput" placeholder="Müvekkil adı veya plaka ara...">
+                            </div>
+                            <button id="searchBtn" class="btn btn-primary">Ara</button>
+                            <button id="clearSearchBtn" class="btn btn-secondary">Temizle</button>
+                        </div>
+                    </div>
+
+                    <!-- Evrak Tedarik Dosyaları -->
+                    <div id="pendingFilesSection" style="display: none;">
+                        <div class="section-title">
+                            <h2><i class="fas fa-hourglass-half"></i> Evrak Tedarik Aşamasındaki Dosyalar</h2>
+                            <button id="hidePendingFilesBtn" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Geri Dön
+                            </button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Kayıt Tarihi</th>
+                                        <th>Müvekkil</th>
+                                        <th>Plaka</th>
+                                        <th>Dosya Türü</th>
+                                        <th>Eksik Belgeler</th>
+                                        <th>İşlemler</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="pendingFilesTableBody">
+                                    <!-- Evrak tedarik dosyaları buraya eklenecek -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Başvuruya Hazır Dosyalar -->
+                    <div id="readyFilesSection" style="display: none;">
+                        <div class="section-title">
+                            <h2><i class="fas fa-clipboard-check"></i> Başvuruya Hazır Dosyalar</h2>
+                            <button id="hideReadyFilesBtn" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Geri Dön
+                            </button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Kayıt Tarihi</th>
+                                        <th>Müvekkil</th>
+                                        <th>Plaka</th>
+                                        <th>Dosya Türü</th>
+                                        <th>Eksik Belgeler</th>
+                                        <th>İşlemler</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="readyFilesTableBody">
+                                    <!-- Başvuruya hazır dosyalar buraya eklenecek -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Tüm Dosyalar -->
+                    <div id="allFilesSection">
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Kayıt Tarihi</th>
+                                        <th>Müvekkil</th>
+                                        <th>Plaka</th>
+                                        <th>Dosya Türü</th>
+                                        <th>Durum</th>
+                                        <th>İşlemler</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="filesTableBody">
+                                    <!-- Tüm dosyalar buraya eklenecek -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dosya Detayları -->
+                <div id="fileDetailSection" style="display: none;">
+                    <div class="content-header">
+                        <button id="backToListBtn" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Geri Dön
+                        </button>
+                        <h2 id="fileDetailTitle">Dosya Detayları</h2>
+                        <div class="header-actions">
+                            <button id="editFileBtn" class="btn btn-primary">
+                                <i class="fas fa-edit"></i> Düzenle
+                            </button>
+                            <button id="deleteFileBtn" class="btn btn-danger">
+                                <i class="fas fa-trash"></i> Sil
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-container">
+                        <div id="fileView">
+                            <!-- Dosya bilgileri burada görüntülenecek -->
+                        </div>
+                        
+                        <div id="fileEdit" style="display: none;">
+                            <!-- Dosya düzenleme formu burada olacak -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Yeni Dosya Formu -->
+                <div id="newFileSection" style="display: none;">
+                    <div class="content-header">
+                        <button id="backToListFromNewBtn" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Geri Dön
+                        </button>
+                        <h2>Yeni Dosya Ekle</h2>
+                    </div>
+                    
+                    <div class="form-container">
+                        <form id="newFileForm">
+                            <!-- Form içeriği script.js'de oluşturulacak -->
+                        </form>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
