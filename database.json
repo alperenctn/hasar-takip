@@ -1,17 +1,16 @@
 {
   "files": [
     {
-      "id": "mjbk1ous0iqcb14eq",
-      "registrationDate": "2025-12-18T14:47:53.620Z",
+      "id": "mjbujh7b9byc7wr9n",
+      "registrationDate": "2025-12-18T19:41:39.671Z",
       "clientName": "aa",
       "tc": "aa",
       "plate": "aa",
       "driverName": "",
       "fileTypes": [
-        "Değer Kaybı",
-        "İkame Araç Bedeli"
+        "Değer Kaybı"
       ],
-      "fileType": "Çoklu",
+      "fileType": "Değer Kaybı",
       "fileStatus": "Başvuruya Hazır",
       "opponentName": "",
       "opponentPlate": "",
@@ -27,88 +26,17 @@
       "documents": []
     },
     {
-      "id": "mjbk42vwg8vhn603o",
-      "registrationDate": "2025-12-18T14:49:45.116Z",
-      "clientName": "b",
-      "tc": "b",
-      "plate": "b",
+      "id": "mjbuxl57zok6zdzzo",
+      "registrationDate": "2025-12-18T19:52:37.963Z",
+      "clientName": "ff",
+      "tc": "ff",
+      "plate": "ff",
       "driverName": "",
       "fileTypes": [
         "Değer Kaybı"
       ],
       "fileType": "Değer Kaybı",
-      "fileStatus": "Evrak Tedarik Aşamasında",
-      "opponentName": "",
-      "opponentPlate": "",
-      "opponentDriver": "",
-      "insuranceCompany": "",
-      "percentage": "",
-      "master": "",
-      "insuranceApplicationDate": "",
-      "arbitrationApplicationDate": "",
-      "enforcementApplicationDate": "",
-      "currentStatus": "",
-      "notes": "bbbb",
-      "documents": [
-        {
-          "id": "mjbk42vww1e6ehxt1",
-          "type": "Araç Fotoğrafları",
-          "name": "WhatsApp Image 2025-12-17 at 16.50.56.txt",
-          "uploadedDate": "2025-12-18T14:49:45.116Z"
-        },
-        {
-          "id": "mjbo5umwjf4vcd54i",
-          "type": "Kimlik Fotokopileri",
-          "name": "WhatsApp Image 2025-12-17 at 16.50.55.jpeg",
-          "uploadedDate": "2025-12-18T16:43:06.200Z"
-        }
-      ]
-    },
-    {
-      "id": "mjbk5myndtwlmm52n",
-      "registrationDate": "2025-12-18T14:50:57.795Z",
-      "clientName": "cc",
-      "tc": "cc",
-      "plate": "cc",
-      "driverName": "",
-      "fileTypes": [
-        "Değer Kaybı",
-        "İkame Araç Bedeli"
-      ],
-      "fileType": "Çoklu",
-      "fileStatus": "Evrak Tedarik Aşamasında",
-      "opponentName": "",
-      "opponentPlate": "",
-      "opponentDriver": "",
-      "insuranceCompany": "",
-      "percentage": "15",
-      "master": "",
-      "insuranceApplicationDate": "",
-      "arbitrationApplicationDate": "",
-      "enforcementApplicationDate": "",
-      "currentStatus": "",
-      "notes": "cc",
-      "documents": [
-        {
-          "id": "mjbk5myn6xgbyjc09",
-          "type": "Araç Fotoğrafları",
-          "name": "WhatsApp Image 2025-12-17 at 16.50.55.jpeg",
-          "uploadedDate": "2025-12-18T14:50:57.791Z"
-        }
-      ]
-    },
-    {
-      "id": "mjbk7ymjxltnam7ty",
-      "registrationDate": "2025-12-18T14:52:46.223Z",
-      "clientName": "11",
-      "tc": "11",
-      "plate": "11",
-      "driverName": "11",
-      "fileTypes": [
-        "Değer Kaybı"
-      ],
-      "fileType": "Değer Kaybı",
-      "fileStatus": "Tahkimde",
+      "fileStatus": "Başvuruya Hazır",
       "opponentName": "",
       "opponentPlate": "",
       "opponentDriver": "",
@@ -120,49 +48,7 @@
       "enforcementApplicationDate": "",
       "currentStatus": "",
       "notes": "",
-      "documents": [
-        {
-          "id": "mjbk7ymjraotc68f9",
-          "type": "Ruhsat Fotokopileri",
-          "name": "WhatsApp Image 2025-12-17 at 16.50.55.jpeg",
-          "uploadedDate": "2025-12-18T14:52:46.219Z"
-        }
-      ]
-    },
-    {
-      "id": "mjbkfwd97azx8v4if",
-      "registrationDate": "2025-12-18T14:58:56.541Z",
-      "clientName": "mmmmm",
-      "tc": "mmmmm",
-      "plate": "mmmmm",
-      "driverName": "mmmmm",
-      "fileTypes": [
-        "Değer Kaybı",
-        "İkame Araç Bedeli",
-        "İcra Takibi",
-        "Pert Farkı"
-      ],
-      "fileType": "Çoklu",
-      "fileStatus": "Başvuruya Hazır",
-      "opponentName": "mmmmmm",
-      "opponentPlate": "mmmmm",
-      "opponentDriver": "mm",
-      "insuranceCompany": "mm",
-      "percentage": "mm",
-      "master": "mm",
-      "insuranceApplicationDate": "",
-      "arbitrationApplicationDate": "",
-      "enforcementApplicationDate": "",
-      "currentStatus": "mm",
-      "notes": "mmmmmmmmmmmmmmmmmmmmmmmmmmm",
-      "documents": [
-        {
-          "id": "mjbkgmqn1jwv8be3f",
-          "type": "Kaza Tespit Tutanağı",
-          "name": "WhatsApp Image 2025-12-17 at 16.50.55.jpeg",
-          "uploadedDate": "2025-12-18T14:59:30.719Z"
-        }
-      ]
+      "documents": []
     }
   ],
   "users": [
@@ -173,5 +59,25 @@
   ],
   "settings": {
     "initialized": true
+  },
+  "statistics": {
+    "totalFiles": 2,
+    "fileTypes": {
+      "Değer Kaybı": 2,
+      "İkame Araç Bedeli": 0,
+      "İcra Takibi": 0,
+      "Pert Farkı": 0,
+      "Diğer": 0
+    },
+    "fileStatuses": {
+      "Başvuruya Hazır": 2,
+      "Başvuru Yapıldı": 0,
+      "Evrak Tedarik Aşamasında": 0,
+      "Tahkimde": 0,
+      "İcrada": 0,
+      "Kapandı": 0
+    },
+    "readyFilesCount": 2,
+    "pendingFilesCount": 0
   }
 }
