@@ -1,5 +1,175 @@
 {
-  "files": [],
+  "files": [
+    {
+      "id": "mjbxrmkbkk9kvo0l8",
+      "registrationDate": "2025-12-18T21:11:58.715Z",
+      "clientName": "cc",
+      "tc": "",
+      "plate": "cc",
+      "driverName": "",
+      "fileTypes": [
+        "Değer Kaybı"
+      ],
+      "fileType": "Değer Kaybı",
+      "fileStatus": "Evrak Tedarik Aşamasında",
+      "opponentName": "",
+      "opponentPlate": "",
+      "opponentDriver": "",
+      "insuranceCompany": "",
+      "percentage": "",
+      "master": "",
+      "insuranceApplicationDate": "",
+      "arbitrationApplicationDate": "",
+      "enforcementApplicationDate": "",
+      "currentStatus": "",
+      "notes": "not",
+      "documents": [
+        {
+          "id": "1766092315595",
+          "name": "1766090828840-397881003.pdf",
+          "type": "Araç Fotoğrafları",
+          "filename": "1766092315594-616637025.pdf",
+          "originalname": "1766090828840-397881003.pdf",
+          "path": "/uploads/1766092315594-616637025.pdf",
+          "uploadedDate": "2025-12-18T21:11:55.595Z",
+          "size": 42702,
+          "mimetype": "application/pdf"
+        },
+        {
+          "id": "1766345614918",
+          "name": "nazmi sevinÃ§ kimlik.jpeg",
+          "type": "Araç Fotoğrafları",
+          "filename": "1766345614906-48625874.jpeg",
+          "originalname": "nazmi sevinÃ§ kimlik.jpeg",
+          "path": "/uploads/1766345614906-48625874.jpeg",
+          "uploadedDate": "2025-12-21T19:33:34.918Z",
+          "size": 114548,
+          "mimetype": "image/jpeg"
+        },
+        {
+          "id": "1766345646775",
+          "name": "SBM kusur oranÄ±.jpeg",
+          "type": "Vekaletname",
+          "filename": "1766345646770-543215037.jpeg",
+          "originalname": "SBM kusur oranÄ±.jpeg",
+          "path": "/uploads/1766345646770-543215037.jpeg",
+          "uploadedDate": "2025-12-21T19:34:06.775Z",
+          "size": 74806,
+          "mimetype": "image/jpeg"
+        },
+        {
+          "id": "1766345661169",
+          "name": "kaza tespit tutanaÄÄ±.jpeg",
+          "type": "Vekaletname",
+          "filename": "1766345661145-787691034.jpeg",
+          "originalname": "kaza tespit tutanaÄÄ±.jpeg",
+          "path": "/uploads/1766345661145-787691034.jpeg",
+          "uploadedDate": "2025-12-21T19:34:21.169Z",
+          "size": 488378,
+          "mimetype": "image/jpeg"
+        },
+        {
+          "id": "1766345663504",
+          "name": "murat dÃ¼ren kimlik.jpeg",
+          "type": "Vekaletname",
+          "filename": "1766345663477-36704576.jpeg",
+          "originalname": "murat dÃ¼ren kimlik.jpeg",
+          "path": "/uploads/1766345663477-36704576.jpeg",
+          "uploadedDate": "2025-12-21T19:34:23.504Z",
+          "size": 530353,
+          "mimetype": "image/jpeg"
+        }
+      ]
+    },
+    {
+      "id": "mjgrpi82beg63frkv",
+      "registrationDate": "2025-12-22T06:21:12.962Z",
+      "clientName": "alp",
+      "tc": "",
+      "plate": "66",
+      "driverName": "",
+      "fileTypes": [
+        "İkame Araç Bedeli",
+        "İcra Takibi"
+      ],
+      "fileType": "Çoklu",
+      "fileStatus": "Başvuruya Hazır",
+      "opponentName": "",
+      "opponentPlate": "",
+      "opponentDriver": "",
+      "insuranceCompany": "",
+      "percentage": "33",
+      "master": "",
+      "insuranceApplicationDate": "",
+      "arbitrationApplicationDate": "",
+      "enforcementApplicationDate": "",
+      "currentStatus": "",
+      "notes": "gggggg",
+      "documents": [
+        {
+          "id": "1766384470292",
+          "name": "SBM kusur oranÄ±.jpeg",
+          "type": "Kaza Tespit Tutanağı",
+          "filename": "1766384470289-67094305.jpeg",
+          "originalname": "SBM kusur oranÄ±.jpeg",
+          "path": "/uploads/1766384470289-67094305.jpeg",
+          "uploadedDate": "2025-12-22T06:21:10.292Z",
+          "size": 74806,
+          "mimetype": "image/jpeg"
+        }
+      ]
+    },
+    {
+      "id": "mjgrr1uk0kn2kijly",
+      "registrationDate": "2025-12-22T06:22:25.052Z",
+      "clientName": "bb",
+      "tc": "",
+      "plate": "bb",
+      "driverName": "",
+      "fileTypes": [
+        "Değer Kaybı"
+      ],
+      "fileType": "Değer Kaybı",
+      "fileStatus": "Başvuruya Hazır",
+      "opponentName": "",
+      "opponentPlate": "",
+      "opponentDriver": "",
+      "insuranceCompany": "",
+      "percentage": "",
+      "master": "",
+      "insuranceApplicationDate": "",
+      "arbitrationApplicationDate": "",
+      "enforcementApplicationDate": "",
+      "currentStatus": "",
+      "notes": "",
+      "documents": []
+    },
+    {
+      "id": "mjgrrvdxgv37mkdcp",
+      "registrationDate": "2025-12-22T06:23:03.333Z",
+      "clientName": "jj",
+      "tc": "jj",
+      "plate": "jj",
+      "driverName": "",
+      "fileTypes": [
+        "İcra Takibi"
+      ],
+      "fileType": "İcra Takibi",
+      "fileStatus": "Tahkimde",
+      "opponentName": "",
+      "opponentPlate": "",
+      "opponentDriver": "",
+      "insuranceCompany": "",
+      "percentage": "",
+      "master": "",
+      "insuranceApplicationDate": "",
+      "arbitrationApplicationDate": "",
+      "enforcementApplicationDate": "",
+      "currentStatus": "",
+      "notes": "",
+      "documents": []
+    }
+  ],
   "users": [
     {
       "username": "123",
@@ -10,23 +180,23 @@
     "initialized": true
   },
   "statistics": {
-    "totalFiles": 0,
+    "totalFiles": 4,
     "fileTypes": {
-      "Değer Kaybı": 0,
-      "İkame Araç Bedeli": 0,
-      "İcra Takibi": 0,
+      "Değer Kaybı": 2,
+      "İkame Araç Bedeli": 1,
+      "İcra Takibi": 2,
       "Pert Farkı": 0,
       "Diğer": 0
     },
     "fileStatuses": {
-      "Başvuruya Hazır": 0,
+      "Başvuruya Hazır": 2,
       "Başvuru Yapıldı": 0,
-      "Evrak Tedarik Aşamasında": 0,
-      "Tahkimde": 0,
+      "Evrak Tedarik Aşamasında": 1,
+      "Tahkimde": 1,
       "İcrada": 0,
       "Kapandı": 0
     },
-    "readyFilesCount": 0,
-    "pendingFilesCount": 0
+    "readyFilesCount": 2,
+    "pendingFilesCount": 1
   }
 }
